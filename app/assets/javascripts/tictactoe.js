@@ -4,6 +4,9 @@
 var turn = 0;
 var current = 0;
 
+var gameId = 0;
+
+
 $(document).ready(function(){
   attachListeners();
 });
@@ -36,6 +39,8 @@ function player(){
 
 function updateState(square){
   $(square).text(player())
+  var token = player()
+  $(square).text(token)
 }
 
 function setMessage(string){
@@ -86,6 +91,26 @@ function checkWinner(){
 }
 
 
+<<<<<<< HEAD
+=======
+function allGames(){
+  $.get("/games").done(function(resp){
+    var games = resp.data;
+    for(var game of games){
+      gameButtons(game)
+    }
+  })
+}
+
+
+
+function gameButtons(game){
+  var button = `<button id=${game.id}>Game ${game.id}</button>`;
+  $('#games').append(button)
+}
+
+
+>>>>>>> 966d60806a33df2a5162bcfd5d2725e61cd14415
 function saveGame(){
  var state=[];
   $('td').text((index, square) => {
@@ -95,6 +120,13 @@ function saveGame(){
   if (current === 0){
     $.post('/games', {state: state}, function(response) {
       current = response.data.id;
+<<<<<<< HEAD
+=======
+
+  if (gameId === 0){
+    $.post('/games', {state: state}, function(response) {
+      gameId = response.data.id;
+>>>>>>> 966d60806a33df2a5162bcfd5d2725e61cd14415
       $('#games').append(`<button id="gameid-${response.data.id}">${response.data.id}</button><br>`)
       $("#gameid-" + response.data.id).on('click', function(){
         reloadGame(response.data.id)
@@ -103,15 +135,23 @@ function saveGame(){
   } else {
     $.ajax({
       type: 'PATCH',
+<<<<<<< HEAD
       url: `/games/${current}`,
       data: {state: state}
     });
   }
+=======
+      url: `/games/${currentGame}`,
+      data: {state: state}
+    });
+  })
+>>>>>>> 966d60806a33df2a5162bcfd5d2725e61cd14415
 }
 
 function isTie(){
   if(turn === 9 && !checkWinner()){
     setMessage("Tie game.");
+    setMessage(`Tie game.`);
     return true
   }
 }
@@ -141,12 +181,22 @@ function showGame (id) {
       square.innerHTML = state[index]
     })
   })
+
+function clearPrevious(){
+  $('#games').empty();
+}
+
+function resetGame(){
+  $('td').empty()
+  turn = 0
+  gameId = 0
 }
 
 function gameOver(){
   if(checkWinner() || isTie()){
     saveGame();
     resetBoard();
+    resetGame();
     return true;
   } else {
     return false;
